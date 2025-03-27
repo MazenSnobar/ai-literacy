@@ -1,46 +1,30 @@
 import { Form, useActionData, useNavigation } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
-import { getSession, commitSession } from "~/entry.server";
+import type { ActionFunction } from "@remix-run/node";
+import { verifyEmailCode } from "./services/auth";
+import { commitSession } from "~/session/session.server";
+
 
 interface ActionData {
     error?: string;
 }
 
-export const action = async ({ request }) => {
-    const session = await getSession(request);
-    const formData = await request.formData();
-    const code = formData.get("code");
-
-    const storedCode = session.get("verificationCode");
-    const storedEmail = session.get("email");
-
-    if (!storedCode || !storedEmail) {
-        return redirect("/login"); // Redirect if session is missing
-    }
-
-    if (!code) {
-        return json({ error: "Code is required" }, { status: 400 });
-    }
-
-    if (storedCode !== code) {
-        return json({ error: "Invalid verification code" }, { status: 400 });
-    }
-
-    // Mark user as authenticated
-    session.set("isAuthenticated", true);
-
-    // Clear verification code after successful login
-    session.unset("verificationCode");
-
-    return redirect("/dashboard", {
+export const action: ActionFunction = async ({ request }) => {
+    try {
+      const response = await verifyEmailCode(request);
+  if (response.success)
+      return redirect("/dashboard", {
         headers: {
-            "Set-Cookie": await commitSession(session),
+          "Set-Cookie": await commitSession(response.session),
         },
-    });
-};
-
+      });
+    } catch (error: any) {
+      console.error("Verification failed:", error.message);
+      return json({ error: error.message }, { status: 400 });
+    }
+  };
 export default function VerifyCode() {
-    const actionData = useActionData<ActionData>(); // ✅ Define type here
+    const actionData = useActionData<ActionData>();
     const navigation = useNavigation();
     const isSubmitting = navigation.state === "submitting";
 
@@ -49,7 +33,7 @@ export default function VerifyCode() {
             <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
                 <h1 className="text-2xl font-semibold text-center mb-6">Enter Code</h1>
                 <p className="text-gray-600 text-sm text-center mb-4">
-                    A verification code was sent to your email. Enter it below.
+                    A verificatioÍn code was sent to your email. Enter it below.
                 </p>
                 <Form method="post" className="flex flex-col">
                     <input
