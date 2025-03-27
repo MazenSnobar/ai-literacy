@@ -1,6 +1,6 @@
 import { Authenticator } from "remix-auth";
-import { createCookie, redirect, Session,  LoaderFunctionArgs, json, } from "@remix-run/node";
-import { commitSession, getSession, sessionStorage } from "../../session/session.server";
+import { redirect, Session,  LoaderFunctionArgs } from "@remix-run/node";
+import { getSession, sessionStorage } from "../../session/session.server";
 import { Organization, prisma } from "./prisma.server";
 import { sendVerificationCode } from "./email.service";
 import { createOrg } from "./organization.server";

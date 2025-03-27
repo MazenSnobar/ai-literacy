@@ -1,4 +1,4 @@
-import { ActionFunction, json, LoaderFunction, redirect } from "@remix-run/node";
+import { ActionFunction, json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData } from "@remix-run/react";
 import { commitSession, getSession } from "~/session/session.server";
 import { authenticateByEmail } from "../services/auth";

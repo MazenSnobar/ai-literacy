@@ -1,6 +1,4 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { requireUser } from "~/session/guards.server";
 import { redirectIfNotLoggedInLoader } from "./services/auth";
 
 export const loader = redirectIfNotLoggedInLoader;
