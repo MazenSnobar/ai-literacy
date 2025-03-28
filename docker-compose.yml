@@ -1,0 +1,32 @@
+
+services:
+  app:
+    image: registry.savvy.codes/savvycodes/ai-literacy:main-7404411
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+
+  postgres:
+    image: postgres:17
+    restart: unless-stopped
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ./prisma_db.sql:/docker-entrypoint-initdb.d/prisma_db.sql
+    environment:
+      - POSTGRES_USER=ai-literacy
+      - POSTGRES_DB=ai-literacy
+      - POSTGRES_PASSWORD=ai-literacy
+    ports:
+      - 5432:5432
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8026:8025"
+      - "1026:1025"
+    restart: unless-stopped
+    
+volumes:
+  db: {}
