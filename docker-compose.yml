@@ -1,12 +1,12 @@
 
 services:
-  app:
-    image: registry.savvy.codes/savvycodes/ai-literacy:main-7404411
-    restart: unless-stopped
-    ports:
-      - 3000:3000
-    env_file:
-      - .env
+  # app:
+  #   image: registry.savvy.codes/savvycodes/ai-literacy:main-f582b62
+  #   restart: unless-stopped
+  #   ports:
+  #     - 3000:3000
+  #   env_file:
+  #     - .env
 
   postgres:
     image: postgres:17
@@ -24,8 +24,8 @@ services:
   mailpit:
     image: axllent/mailpit:latest
     ports:
-      - "8026:8025"
-      - "1026:1025"
+      - "8025:8025"
+      - "1025:1025"
     restart: unless-stopped
     
 volumes:

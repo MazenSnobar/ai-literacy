@@ -1,3 +1,7 @@
+// app/session/session.server.ts
+import dotenv from "dotenv";
+dotenv.config();
+
 import { Organization } from '@prisma/client';
 import { createCookieSessionStorage } from '@remix-run/node';
 

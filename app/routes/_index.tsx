@@ -1,12 +1,6 @@
-import "dotenv/config";
 import type { MetaFunction, LoaderFunction, ActionFunction } from "@remix-run/node";
 import { Form, Link, redirect } from "@remix-run/react";
-import { authenticator } from "./services/auth"; // Assuming you have an authenticator service
-
-
-console.log("AUTH_KEY:", process.env.AUTH_KEY);
-console.log("POSTMARK_API_TOKEN:", process.env.POSTMARK_API_TOKEN);
-
+import { authenticator } from "./services/auth";
 
 export const meta: MetaFunction = () => {
   return [
@@ -16,19 +10,10 @@ export const meta: MetaFunction = () => {
 };
 
 
-export const loader: LoaderFunction = async ({ request }) => {
-  const user = await authenticator.isAuthenticated(request, {
-    failureRedirect: "/signup",
-  });
-
-return null;
-};
-
-
 export default function Index() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
+      <div className="bg-gray p-8 rounded-xl shadow-md w-full max-w-md">
         <h1 className="text-2xl font-semibold text-center mb-6">Login</h1>
         <p className="text-gray-600 text-sm text-center mb-4">
           Enter your email to receive a verification code.

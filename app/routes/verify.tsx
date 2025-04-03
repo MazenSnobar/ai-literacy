@@ -10,19 +10,19 @@ interface ActionData {
 }
 
 export const action: ActionFunction = async ({ request }) => {
-    try {
-      const response = await verifyEmailCode(request);
-  if (response.success)
-      return redirect("/dashboard", {
-        headers: {
-          "Set-Cookie": await commitSession(response.session),
-        },
-      });
-    } catch (error: any) {
-      console.error("Verification failed:", error.message);
-      return json({ error: error.message }, { status: 400 });
+//     try {
+//       const response = await verifyEmailCode(request);
+//   if (response.success)
+      return redirect("/dashboard"); {
+//         headers: {
+//           "Set-Cookie": await commitSession(response.session),
+//         },
+//       });
+//     } catch (error: any) {
+//       console.error("Verification failed:", error.message);
+//       return json({ error: error.message }, { status: 400 });
     }
-  };
+   };
 export default function VerifyCode() {
     const actionData = useActionData<ActionData>();
     const navigation = useNavigation();
