@@ -12,7 +12,7 @@ if (!sessionSecret) {
 
 export let sessionStorage = createCookieSessionStorage({
     cookie: {
-        name: "logged_in_session",
+        name: "_auth",
         sameSite: "lax",
         path: "/", 
         httpOnly: true, 
@@ -23,21 +23,25 @@ export let sessionStorage = createCookieSessionStorage({
 export let { getSession, commitSession, destroySession } = sessionStorage;
 
 export type User = {
+  id: string;
   email: string;
+  name: string;
+  organizationId: string;
   token: string;
+  role: "SUPERUSER" | "ADMIN" | "EMPLOYEE";
 }
 
-export const storeUserInSession = async (organization: Pick<Organization, "id">) => {
+export const storeUserInSession = async (user: Pick<Organization, "id">) => {
 const session = await getSession();
-session.set("organizationId", organization.id);
+session.set("userId", user.id);
 const header = await commitSession(session);
 return header
 };  
 
 export const getUserIdFromSession = async (request: Request) => {
   const session = await getSession(request.headers.get("Cookie"));
-  const organizationId = session.get("organizationId")
-  return organizationId;
+  const userId = session.get("userId")
+  return userId;
 }
 
 

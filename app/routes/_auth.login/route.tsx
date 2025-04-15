@@ -1,36 +1,40 @@
-import { ActionFunction, json, redirect } from "@remix-run/node";
+import { ActionFunction, json, LoaderFunction, redirect, ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, Link, useActionData } from "@remix-run/react";
 import { commitSession, getSession } from "~/session/session.server";
-import { authenticateByEmail } from "../services/auth";
-import { validate } from "../services/validate";
-import { redirectIfLoggedInLoader } from "../services/auth";
-
-export const loader = redirectIfLoggedInLoader;
+import { authenticator } from "../../services/auth";
 
 
-export const action: ActionFunction = async ({ request }) => {
-    const cookieHeader = request.headers.get("Cookie");
-    const session = await getSession(cookieHeader);
-    const formData = await request.formData();
-    const email = formData.get("email") as string;
-    const errors = validate(email);
-    if (Object.keys(errors).length > 0) {
-        return json({ errors }, { status: 400 });
-      }
-    try {
-        const updatedSession = await authenticateByEmail(email, session);
-        
-        return redirect("/verify", {
-            headers: {
-                "Set-Cookie": await commitSession(updatedSession),
-            },
-        });
-    } catch (error) {
-        console.error("Email doesn't exist", error);
-        return json({ error: "Email doesn't exist" });
+
+export async function loader({ request}: LoaderFunctionArgs) {
+  const session = await getSession(request.headers.get("Cookie"))
+  const userId = session.get("userId");
+  console.log({userId})
+  if (userId) {
+    return redirect("/dashboard")
+  }
+  return null;
+ }
+
+
+
+export async function action({ request }: ActionFunctionArgs) {
+  try {
+    return await authenticator.authenticate("TOTP", request);
+  } catch (error) {
+    console.log("error", error);
+
+    // The error from TOTP includes the redirect Response with the cookie.
+    if (error instanceof Response) {
+      return error;
     }
-    
-};
+
+    // For other errors, return with error message.
+    return {
+      error: "An error occurred during login. Please try again.",
+    };
+  }
+}
+
 export default function LoginPage() {
    let actionResult = useActionData<typeof action>();
 

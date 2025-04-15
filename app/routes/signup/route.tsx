@@ -1,10 +1,9 @@
 import { Form, json, redirect, useActionData } from "@remix-run/react";
-import { registerOrganizationByEmail } from "../services/auth";
+import { registerOrganizationByEmail } from "../../services/auth";
 import { ActionFunction} from "@remix-run/node";
-import { validate } from "../services/validate";
-import { redirectIfLoggedInLoader } from "../services/auth";
+import { validate } from "../../services/validate";
+import { createUser } from "~/services/users.server";
 
-export const loader = redirectIfLoggedInLoader;
 
 export const action: ActionFunction = async ({ request }) => {
       const formData = await request.formData();
@@ -15,7 +14,7 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors }, { status: 400 });
     }
 try {
-     await registerOrganizationByEmail(email);
+    //  await createUser({name, email, roleId });
     
       return redirect("/login", {
       });

@@ -17,21 +17,48 @@ model Organization {
   id        String   @id @default(uuid())
   name      String
   email     String   @unique
-  employees User[]
   createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  isActive  Boolean  @default(false)
+  users   User[]
 }
 
 model User {
-  id             String        @id @default(uuid())
-  email          String        @unique
+  id             String       @id @default(cuid())
+  organizationId String?      @map("organization_id")
+  Organization   Organization? @relation(fields: [organizationId], references: [id])
   name           String
-  role           Role          @default(EMPLOYEE)
-  createdAt      DateTime      @default(now())
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id])
+  email          String       @unique
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now()) @updatedAt
+  UserRole       UserRole[]
 }
 
-enum Role {
+model Role {
+  id          String         @id @default(cuid())
+  name        UserRoleOption @unique
+  description String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @default(now()) @updatedAt
+  UserRole    UserRole[]
+
+  @@map("roles")
+}
+
+model UserRole {
+  id        String   @id @default(cuid())
+  userId    String   @unique @map("user_id")
+  roleId    String   @map("role_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      Role     @relation(fields: [roleId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("user_roles")
+}
+
+enum UserRoleOption {
+  SUPERUSER
   ADMIN
   EMPLOYEE
 }
